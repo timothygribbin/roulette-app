@@ -1,69 +1,39 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
+import RouletteWheel from '../roulette-wheel';  // Import the RouletteWheel class
 
-function RouletteWheel() {
-  // State to store the result of the spin
-  const [result, setResult] = useState(null);
-  
-  // Roulette numbers and their colors (red, black, and green for 0)
-  const rouletteNumbers = [
-    { number: 0, color: 'green' },
-    { number: 1, color: 'red' },
-    { number: 2, color: 'black' },
-    { number: 3, color: 'red' },
-    { number: 4, color: 'black' },
-    { number: 5, color: 'red' },
-    { number: 6, color: 'black' },
-    { number: 7, color: 'red' },
-    { number: 8, color: 'black' },
-    { number: 9, color: 'red' },
-    { number: 10, color: 'black' },
-    { number: 11, color: 'black' },
-    { number: 12, color: 'red' },
-    { number: 13, color: 'black' },
-    { number: 14, color: 'red' },
-    { number: 15, color: 'black' },
-    { number: 16, color: 'red' },
-    { number: 17, color: 'black' },
-    { number: 18, color: 'red' },
-    { number: 19, color: 'red' },
-    { number: 20, color: 'black' },
-    { number: 21, color: 'red' },
-    { number: 22, color: 'black' },
-    { number: 23, color: 'red' },
-    { number: 24, color: 'black' },
-    { number: 25, color: 'red' },
-    { number: 26, color: 'black' },
-    { number: 27, color: 'red' },
-    { number: 28, color: 'black' },
-    { number: 29, color: 'black' },
-    { number: 30, color: 'red' },
-    { number: 31, color: 'black' },
-    { number: 32, color: 'red' },
-    { number: 33, color: 'black' },
-    { number: 34, color: 'red' },
-    { number: 35, color: 'black' },
-    { number: 36, color: 'red' }
-  ];
-  const spinRoulette = () => {
-    const randomIndex =Math.floor(Math.random * 37)
+function RouletteWheelComponent({ resolveBet }) {
+  useEffect(() => {
+    // Reference the container where the roulette wheel will be rendered
+    const container = document.getElementById('roulette-wheel-container');
+    const options = {
+      speed: 10, // Speed of the wheel spin
+      duration: 5000, // Duration of the wheel spin (5 seconds)
+      onComplete: (result) => {
+        // When the spin is complete, call the resolveBet function with the result
+        resolveBet({ number: result, color: getColor(result) });
+      }
+    };
 
-    setResult(rouletteNumbers[randomIndex])
+    const wheel = new RouletteWheel(container, options);  // Initialize the wheel
+
+    // Trigger the wheel to spin when the button is clicked
+    document.getElementById('spinButton').addEventListener('click', () => {
+      wheel.spin();  // This triggers the wheel to start spinning and generate a random number
+    });
+  }, [resolveBet]);
+
+  // Helper function to determine the color based on the number
+  const getColor = (number) => {
+    if (number === 0) return 'green'; // 0 is green
+    return number % 2 === 0 ? 'black' : 'red'; // Even numbers are black, odd numbers are red
   };
 
-  return(
+  return (
     <div>
-        <h2>Roulette Wheel</h2>
-        <button onClick = {spinRoulette}> Spin the Wheel</button>
-        {result && (
-            <div stle = {{marginTop: '20px' }}>
-                <p>The ball landed on <strong>{result.number}</strong></p>
-                <p>Color: <strong>{result.color}</strong></p>
-            </div>
-        )
-
-        }
+      <div id="roulette-wheel-container" style={{ width: '300px', height: '300px' }}></div>
+      <button id="spinButton">Spin the Wheel</button>
     </div>
-  )
+  );
 }
 
-export default RouletteWheel
+export default RouletteWheelComponent;
