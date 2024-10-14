@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 
 function BettingForm({ placeBet }) {
-  // State to store the amount and type of bet
+  //State to store the amount and type of bet
   const [betAmount, setBetAmount] = useState(0);
-  const [betType, setBetType] = useState('number');  // number or color
-  const [betValue, setBetValue] = useState('');      // specific number or color
+  const [betType, setBetType] = useState('number');  //number or color
+  const [betValue, setBetValue] = useState('');      //specific number or color
   
-  // Function to handle bet submission
+  //Function to handle bet submission
   const handleSubmit = (e) => {
     e.preventDefault();
     if (betAmount > 0 && betValue !== '') {
-      placeBet(betAmount, betValue);  // Call the placeBet function from parent
-      setBetAmount(0);  // Reset the form after submitting
+      placeBet(betAmount, betValue);  //Call the placeBet function from parent
+      setBetAmount(0);  //Reset the form after submitting
       setBetValue('');
     } else {
       alert("Please enter a valid bet amount and selection.");
