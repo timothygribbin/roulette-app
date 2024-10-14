@@ -22,12 +22,6 @@ function RouletteWheelComponent({ resolveBet }) {
     });
   }, [resolveBet]);
 
-  //Helper function to determine the color based on the number
-  const getColor = (number) => {
-    if (number === 0) return 'green'; //0 is green
-    return number % 2 === 0 ? 'black' : 'red'; //Even numbers are black, odd numbers are red
-  };
-
   return (
     <div>
       <div id="roulette-wheel-container" style={{ width: '300px', height: '300px' }}></div>
