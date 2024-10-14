@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Wheel } from 'react-custom-roulette';
 
-// Full set of roulette numbers (0-36) with correct color assignments
+//Full set of roulette numbers (0-36) with correct color assignments
 const data = [
   { option: '0', style: { backgroundColor: 'green'} },
   { option: '32', style: { backgroundColor: 'red' } },
@@ -47,7 +47,7 @@ export default function RouletteWheelComponent({ resolveBet }) {
   const [prizeNumber, setPrizeNumber] = useState(0);
 
   const handleSpinClick = () => {
-    const newPrizeNumber = Math.floor(Math.random() * data.length);  // Select a random prize number
+    const newPrizeNumber = Math.floor(Math.random() * data.length);  //Select a random prize number
     setPrizeNumber(newPrizeNumber);
     setMustSpin(true);
   };
@@ -68,13 +68,13 @@ export default function RouletteWheelComponent({ resolveBet }) {
         data={data}
         onStopSpinning={() => {
           setMustSpin(false);
-          resolveBet({ number: prizeNumber, color: getColor(prizeNumber) });  // Pass result to parent
+          resolveBet({ number: prizeNumber, color: getColor(prizeNumber) });  //Pass result to parent
         }}
-        backgroundColors={['#3e3e3e', '#df3428']}  // Wheel colors
-        textColors={['#ffffff']} // Text colors
+        backgroundColors={['#3e3e3e', '#df3428']}  //Wheel colors
+        textColors={['#ffffff']} //Text colors
         outerBorderWidth={5}
         radiusLineWidth={5}
-        fontSize={15} // Reduces the font size on the wheel
+        fontSize={15} //Reduces the font size on the wheel
         width={250} 
       />
            <button 
@@ -97,8 +97,8 @@ export default function RouletteWheelComponent({ resolveBet }) {
   );
 }
 
-// Helper function to get the color based on the number
+//Helper function to get the color based on the number
 const getColor = (number) => {
-  if (number === 0) return 'green';  // Green for 0
-  return number % 2 === 0 ? 'black' : 'red';  // Even numbers are black, odd numbers are red
+  if (number === 0) return 'green';  //Green for 0
+  return number % 2 === 0 ? 'black' : 'red';  //Even numbers are black, odd numbers are red
 };
