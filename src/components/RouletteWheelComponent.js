@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Wheel } from 'react-custom-roulette';
 
 //Full set of roulette numbers (0-36) with correct color assignments
@@ -41,7 +41,6 @@ const data = [
   { option: '3', style: { backgroundColor: 'red' } },
   { option: '26', style: { backgroundColor: 'black' } },
 ];
-
 export default function RouletteWheelComponent({ resolveBet }) {
   const [mustSpin, setMustSpin] = useState(false);
   const [prizeNumber, setPrizeNumber] = useState(0);
@@ -59,6 +58,16 @@ export default function RouletteWheelComponent({ resolveBet }) {
     };
     resolveBet(result);
   };
+
+  const onStopSpinning = () => {
+    setMustSpin(false);
+    const winningData = data[prizeNumber];
+    const result = {
+      number: winningData.option,
+      color: winningData.style.backgroundColor,
+    };
+    resolveBet(result);
+  };
   
   return (
     <div>
@@ -66,10 +75,7 @@ export default function RouletteWheelComponent({ resolveBet }) {
         mustStartSpinning={mustSpin}
         prizeNumber={prizeNumber}
         data={data}
-        onStopSpinning={() => {
-          setMustSpin(false);
-          resolveBet({ number: prizeNumber, color: getColor(prizeNumber) });  //Pass result to parent
-        }}
+        onStopSpinning={onStopSpinning}
         backgroundColors={['#3e3e3e', '#df3428']}  //Wheel colors
         textColors={['#ffffff']} //Text colors
         outerBorderWidth={5}
@@ -85,14 +91,15 @@ export default function RouletteWheelComponent({ resolveBet }) {
             color: '#fff', 
             borderRadius: '5px', 
             border: 'none',
-            boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.2)',
             cursor: 'pointer',
-            transition: 'all 0.3s ease'
           }}
         >
           Spin the Wheel
         </button>
-
+        <div>
+        <div id="roulette-wheel-container" style={{ width: '300px', height: '300px' }}></div>
+        <button id="spinButton">Spin the Wheel</button>
+      </div>
     </div>
   );
 }

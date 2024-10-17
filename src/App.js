@@ -11,7 +11,6 @@ function App() {
   const [balance, setBalance] = useState(initialBalance);
   const [currentBets, setCurrentBets] = useState([]);
   const [bettingHistory, setBettingHistory] = useState([]);
-  const [message, setMessage] = useState('');
   const [showConfetti, setShowConfetti] = useState(false);
   const [confettiPieces, setConfettiPieces] = useState(200);
 
@@ -23,7 +22,6 @@ function App() {
 
     setBalance(prevBalance => prevBalance - betAmount);
     setCurrentBets([...currentBets, { amount: betAmount, value: betValue }]);
-    setMessage('');
     setShowConfetti(false);
     setConfettiPieces(200);
   };
@@ -35,30 +33,33 @@ function App() {
     }
 
     currentBets.forEach((bet) => {
-      let didWin = false;
+      let didWinNum = false;
+      let didWinColor = false;
 
       if (bet.value === String(result.number)) {
-        didWin = true;
+        didWinNum = true;
       } else if (bet.value.toLowerCase() === result.color) {
-        didWin = true;
+        didWinColor = true;
       }
 
-      if (didWin) {
-        setMessage('You won! 🎉');
-        setBalance(prevBalance => prevBalance + bet.amount * 2);
+      if (didWinColor || didWinNum) {
+        if(didWinColor){
+          setBalance(prevBalance => prevBalance + bet.amount * 2);
+        }
+        if(didWinNum){
+          setBalance(prevBalance => prevBalance + bet.amount * 35);
+        }
         setShowConfetti(true);
 
         setTimeout(() => {
           setShowConfetti(false);
-          setConfettiPieces(0);
-        }, 3000);
-      } else {
-        setMessage('You lost! 😔');
+          setConfettiPieces(10000);
+        }, 10000);
       }
 
       setBettingHistory(prevHistory => [
         ...prevHistory,
-        { ...bet, result: didWin ? 'Win' : 'Loss', outcome: result }
+        { ...bet, result: didWinColor || didWinNum ? 'Win' : 'Loss', outcome: result }
       ]);
     });
 
@@ -76,6 +77,15 @@ function App() {
       fontFamily: "'Poppins', sans-serif", 
       color: '#fff' 
     }}>
+    {showConfetti && (
+      <Confetti
+        numberOfPieces={500}
+        recycle={false}
+        width={window.innerWidth}
+        height={window.innerHeight}
+      />
+    )}
+
       {/* Current Placed Bets */}
       <div style={{
         width: '20%',
@@ -127,13 +137,6 @@ function App() {
         <div style={{ marginBottom: '40px' }}>  {/* Adding space between the form and wheel */}
           <RouletteWheelComponent resolveBet={resolveBet} />
         </div>
-
-        {/* Result Message */}
-        <h2 style={{ fontSize: '2em', margin: '5px', color: message.includes('won') ? 'green' : 'red' }}>
-          {message}
-        </h2>
-
-        {showConfetti && <Confetti numberOfPieces={100} recycle={false} />}
       </div>
 
       {/* Betting History - Right Side */}
