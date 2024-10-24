@@ -1,26 +1,51 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import './App.css'
 import BettingForm from './components/BettingForm';
 import RouletteWheelComponent from './components/RouletteWheelComponent';
-import Confetti from 'react-confetti';
-
-import './App.css'
+import ConfettiDisplay from './components/ConfettiDisplay'
+import CurrentBets from './components/CurrentBets';
+import BalanceAndUpdates from './components/BalanceAndUpdates';
+import BettingHistory from './components/BettingHistory';
 
 function App() {
 
   const initialBalance = 1000;
   const [balance, setBalance] = useState(initialBalance);
+  const [previousBalance, setPreviousBalance] = useState(initialBalance); 
   const [currentBets, setCurrentBets] = useState([]);
   const [bettingHistory, setBettingHistory] = useState([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const [confettiPieces, setConfettiPieces] = useState(200);
+  const [balanceChange, setBalanceChange] = useState(null);
+  const [showBalanceChange, setShowBalanceChange] = useState(false); 
+  
+  useEffect(() => {
+    if (balance !== initialBalance) {
+      const changeAmount = Math.abs(balance - previousBalance);
+      const positiveChange = balance > previousBalance;
+      
+      setBalanceChange({
+        amount: changeAmount,
+        positive: positiveChange,
+      });
+
+      setShowBalanceChange(true);
+
+      const timer = setTimeout(() => {
+        setShowBalanceChange(false);
+      }, 1500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [balance]);
 
   const placeBet = (betAmount, betValue) => {
     if (betAmount > balance) {
       alert('Insufficient balance!');
       return;
     }
-
-    setBalance(prevBalance => prevBalance - betAmount);
+    setPreviousBalance(balance);
+    setBalance((prevBalance) => prevBalance - betAmount);
     setCurrentBets([...currentBets, { amount: betAmount, value: betValue }]);
     setShowConfetti(false);
     setConfettiPieces(200);
@@ -43,6 +68,7 @@ function App() {
       }
 
       if (didWinColor || didWinNum) {
+        setPreviousBalance(balance);
         if(didWinColor){
           setBalance(prevBalance => prevBalance + bet.amount * 2);
         }
@@ -54,7 +80,7 @@ function App() {
         setTimeout(() => {
           setShowConfetti(false);
           setConfettiPieces(10000);
-        }, 10000);
+        }, 2000);
       }
 
       setBettingHistory(prevHistory => [
@@ -67,109 +93,36 @@ function App() {
   };
 
   return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'flex-start',
-      height: '100vh',
-      padding: '20px',
-      background: 'linear-gradient(135deg, #0e0b16 0%, #1d2671 100%)', 
-      fontFamily: "'Poppins', sans-serif", 
-      color: '#fff' 
-    }}>
-    {showConfetti && (
-      <Confetti
-        numberOfPieces={500}
-        recycle={false}
-        width={window.innerWidth}
-        height={window.innerHeight}
+  <div className="app-container">
+
+    <ConfettiDisplay showConfetti={showConfetti} />
+
+
+    <CurrentBets currentBets = {currentBets}/>
+
+    {/* Center Area: Roulette Wheel and Betting Form */}
+    <div className="center-area">
+      {/* Current Balance and Balance Change */}
+      <div className="balance-container">
+      <BalanceAndUpdates
+        balance={balance} 
+        showBalanceChange={showBalanceChange} 
+        balanceChange={balanceChange} 
       />
-    )}
-
-      {/* Current Placed Bets */}
-      <div style={{
-        width: '20%',
-        marginRight: '20px',
-        backgroundColor: '#444c7e',
-        padding: '10px',
-        borderRadius: '8px',
-        boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.1)',
-        maxHeight: '600px',
-        overflowY: 'auto',
-        color: '#333' 
-      }}>
-        <h2>Current Placed Bets</h2>
-        <ul style={{ listStyleType: 'none', padding: '0' }}>
-          {currentBets.map((bet, index) => (
-            <li key={index} style={{ marginBottom: '10px' }}>
-              <div style={{
-                backgroundColor: '#666',
-                boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.1)',
-                borderRadius: '8px',
-                padding: '10px',
-                margin: '10px 0',
-              }}>
-                Bet {index + 1}: ${bet.amount} on {bet.value}
-              </div>
-            </li>
-          ))}
-        </ul>
       </div>
 
-      {/* Center Area: Roulette Wheel and Betting Form */}
-      <div style={{
-        width: '60%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        textAlign: 'center',
-        color: '#fff'
-      }}>
-        {/* Current Balance */}
-        <div style={{ marginBottom: '20px', fontSize: '1.5em' }}>
-          Current Balance: ${balance}
-        </div>
+      {/* Betting Form */}
+      <BettingForm placeBet={placeBet} style={{ marginBottom: '60px' }} />
 
-        {/* Betting Form */}
-        <BettingForm placeBet={placeBet} style={{ marginBottom: '60px' }} />
-
-        {/* Roulette Wheel */}
-        <div style={{ marginBottom: '40px' }}>  {/* Adding space between the form and wheel */}
-          <RouletteWheelComponent resolveBet={resolveBet} />
-        </div>
-      </div>
-
-      {/* Betting History - Right Side */}
-      <div style={{
-        width: '20%',
-        marginLeft: '20px',
-        backgroundColor: '#444c7e',
-        padding: '10px',
-        borderRadius: '8px',
-        boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.1)',
-        maxHeight: '600px',
-        overflowY: 'auto',
-        color: '#333'
-      }}>
-        <h2>Betting History</h2>
-        <ul style={{ listStyleType: 'none', padding: '0' }}>
-          {bettingHistory.map((bet, index) => (
-            <li key={index} style={{ marginBottom: '10px' }}>
-              <div style={{
-                backgroundColor: '#666',
-                boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.1)',
-                borderRadius: '8px',
-                padding: '10px',
-                margin: '10px 0',
-              }}>
-                Bet {index + 1}: ${bet.amount} on {bet.value} - {bet.result}
-                (Outcome: {bet.outcome.number} - {bet.outcome.color})
-              </div>
-            </li>
-          ))}
-        </ul>
+      {/* Roulette Wheel */}
+      <div className="roulette-wheel">
+        <RouletteWheelComponent resolveBet={resolveBet} />
       </div>
     </div>
+
+    {/* Betting History - Right Side */}
+    <BettingHistory bettingHistory={bettingHistory} />
+  </div>
   );
 }
 

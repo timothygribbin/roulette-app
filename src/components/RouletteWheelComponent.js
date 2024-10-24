@@ -41,22 +41,15 @@ const data = [
   { option: '3', style: { backgroundColor: 'red' } },
   { option: '26', style: { backgroundColor: 'black' } },
 ];
+
 export default function RouletteWheelComponent({ resolveBet }) {
   const [mustSpin, setMustSpin] = useState(false);
   const [prizeNumber, setPrizeNumber] = useState(0);
 
   const handleSpinClick = () => {
-    const newPrizeNumber = Math.floor(Math.random() * data.length);  //Select a random prize number
-    setPrizeNumber(newPrizeNumber);
+    const newPrizeNumber = Math.floor(Math.random() * data.length);
+    setPrizeNumber(newPrizeNumber)
     setMustSpin(true);
-  };
-
-  const onComplete = () => {
-    const result = {
-      number: data[prizeNumber].option,
-      color: prizeNumber === 0 ? 'green' : prizeNumber % 2 === 0 ? 'black' : 'red',
-    };
-    resolveBet(result);
   };
 
   const onStopSpinning = () => {
@@ -66,6 +59,7 @@ export default function RouletteWheelComponent({ resolveBet }) {
       number: winningData.option,
       color: winningData.style.backgroundColor,
     };
+    setPrizeNumber(null);
     resolveBet(result);
   };
   
@@ -76,11 +70,11 @@ export default function RouletteWheelComponent({ resolveBet }) {
         prizeNumber={prizeNumber}
         data={data}
         onStopSpinning={onStopSpinning}
-        backgroundColors={['#3e3e3e', '#df3428']}  //Wheel colors
-        textColors={['#ffffff']} //Text colors
+        backgroundColors={['#3e3e3e', '#df3428']} 
+        textColors={['#ffffff']} 
         outerBorderWidth={5}
         radiusLineWidth={5}
-        fontSize={15} //Reduces the font size on the wheel
+        fontSize={15} 
         width={250} 
       />
            <button 
@@ -96,16 +90,6 @@ export default function RouletteWheelComponent({ resolveBet }) {
         >
           Spin the Wheel
         </button>
-        <div>
-        <div id="roulette-wheel-container" style={{ width: '300px', height: '300px' }}></div>
-        <button id="spinButton">Spin the Wheel</button>
-      </div>
     </div>
   );
 }
-
-//Helper function to get the color based on the number
-const getColor = (number) => {
-  if (number === 0) return 'green';  //Green for 0
-  return number % 2 === 0 ? 'black' : 'red';  //Even numbers are black, odd numbers are red
-};
