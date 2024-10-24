@@ -15,7 +15,6 @@ function App() {
   const [currentBets, setCurrentBets] = useState([]);
   const [bettingHistory, setBettingHistory] = useState([]);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [confettiPieces, setConfettiPieces] = useState(200);
   const [balanceChange, setBalanceChange] = useState(null);
   const [showBalanceChange, setShowBalanceChange] = useState(false); 
   
@@ -23,7 +22,7 @@ function App() {
     if (balance !== initialBalance) {
       const changeAmount = Math.abs(balance - previousBalance);
       const positiveChange = balance > previousBalance;
-      
+
       setBalanceChange({
         amount: changeAmount,
         positive: positiveChange,
@@ -41,14 +40,14 @@ function App() {
 
   const placeBet = (betAmount, betValue) => {
     if (betAmount > balance) {
-      alert('Insufficient balance!');
+      alert('Insufficient balance');
       return;
     }
+
     setPreviousBalance(balance);
     setBalance((prevBalance) => prevBalance - betAmount);
     setCurrentBets([...currentBets, { amount: betAmount, value: betValue }]);
     setShowConfetti(false);
-    setConfettiPieces(200);
   };
 
   const resolveBet = (result) => {
@@ -79,7 +78,6 @@ function App() {
 
         setTimeout(() => {
           setShowConfetti(false);
-          setConfettiPieces(10000);
         }, 2000);
       }
 
@@ -89,14 +87,12 @@ function App() {
       ]);
     });
 
-    setCurrentBets([]); // Clear current bets after resolving
+    setCurrentBets([]);
   };
 
   return (
   <div className="app-container">
-
     <ConfettiDisplay showConfetti={showConfetti} />
-
 
     <CurrentBets currentBets = {currentBets}/>
 
@@ -115,9 +111,8 @@ function App() {
       <BettingForm placeBet={placeBet} style={{ marginBottom: '60px' }} />
 
       {/* Roulette Wheel */}
-      <div className="roulette-wheel">
         <RouletteWheelComponent resolveBet={resolveBet} />
-      </div>
+      
     </div>
 
     {/* Betting History - Right Side */}

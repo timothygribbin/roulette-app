@@ -10,10 +10,18 @@ function BettingForm({ placeBet }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (betAmount > 0 && betValue !== '') {
-      placeBet(betAmount, betValue);  //Call the placeBet function from parent
-      setBetAmount(0);  //Reset the form after submitting
-      setBetValue('');
-    } else {
+      const isNumberBet = !isNaN(betValue) && betValue >= 0 && betValue <= 36
+      const isColorBet = ['red', 'black'].includes(betValue.toLowerCase());
+      if(isNumberBet || isColorBet){
+        placeBet(betAmount, betValue);  //Call the placeBet function from parent
+        setBetAmount(0);  //Reset the form after submitting
+        setBetValue('');
+      }
+      else{
+        alert('Please enter a valid bet value (0-36 for number, or red and black)')
+      }
+    } 
+    else {
       alert("Please enter a valid bet amount and selection.");
     }
   };
@@ -49,7 +57,6 @@ function BettingForm({ placeBet }) {
             <option value="">Select Color</option>
             <option value="red">Red</option>
             <option value="black">Black</option>
-            <option value="green">Green</option>
           </select>
         )}
 
